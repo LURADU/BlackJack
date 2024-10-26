@@ -2,23 +2,22 @@ import java.net.*;
 import java.io.*;
 
 public class ServerClient  {
-    private Socket clientSocket;
-    private BufferedReader in;
-    private PrintWriter out;
-    private Thread receiverThread;
-    private ObjectOutputStream oos;
-    private MessageHandler messageHandler;
+    private Socket clientSocket;            // Socket to connect to the server
+    private BufferedReader in;              // Reader for incoming messages
+    private PrintWriter out;                // Writer for outgoing messages
+    private Thread receiverThread;          // Thread to listen for incoming messages
+    private ObjectOutputStream oos;         // Output stream to send objects
+    private MessageHandler messageHandler;  // Interface to handle received messages
 
-
+    /**
+     *
+     */
     public interface MessageHandler{
         void  handleMessage(String msg);
-
-
     }
 
     public void setMessageHandler(MessageHandler messageHandler){
         this.messageHandler = messageHandler;
-
     }
 
     public void startConection(String host, int port) throws IOException {

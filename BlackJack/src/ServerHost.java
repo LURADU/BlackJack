@@ -16,7 +16,7 @@ public class ServerHost  {
 
 
 
-
+    // Start the server and continuously listen for new client connections
     public void start() throws IOException {
         serverSocket = new ServerSocket(PORT);
 
@@ -27,12 +27,15 @@ public class ServerHost  {
         }
 
     }
+
+    // Broadcast a message to all connected clients
     private void broadcast(String message) {
         for (ClientHandler handler : clientHandlerHashMap.values()) {
             handler.sendMessage(message);
         }
     }
 
+    // Deal the initial two cards to each player and the dealer
     private void dealFirstCards(){
         for(int i =0; i<players.size(); i++){
             players.get(i).addCardToHand(deck.drawCard());
@@ -45,6 +48,8 @@ public class ServerHost  {
 
     }
 
+
+    // Check if a player has won or lost
     private void checkWinner(Player player) {
         if (player.getHandValue() == 21) {
             System.out.println(player.getName() + " Blackjack....You win");
@@ -55,6 +60,8 @@ public class ServerHost  {
         }
     }
 
+
+    // Determine the winners after all players have finished their turns
     private void determineWinners() {
         showDealerFirstCard = true;
         broadcast("Dealer's final hand: " + dealer.toString(showDealerFirstCard));
@@ -69,6 +76,7 @@ public class ServerHost  {
         resetGame();
     }
 
+    // Reset the game state for the next round
     private void resetGame() {
         deck = new Deck();
         for (Player player : players) {
@@ -83,13 +91,15 @@ public class ServerHost  {
     }
 
 
-
+    // Send a message to a specific client
     public static void sendMessageToClient(String clientName, String message){
         ClientHandler handler = clientHandlerHashMap.get(clientName);
         if(handler != null)
             handler.sendMessage(message);
     }
 
+
+    // Inner class to handle communication with a specific client
     private class ClientHandler extends Thread {
         private Player player;
         private Socket clientSocket;
@@ -98,22 +108,22 @@ public class ServerHost  {
         public Main main = new Main( 1000);
         private ObjectInputStream ois;
 
+
+        // Send a message to the client
         public void sendMessage(String msg){
             if(out != null);
             out.println(msg);
         }
 
 
-
+        // Constructor to initialize the client handler with the client's socket
         public ClientHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
 
         }
 
 
-
-
-
+        // Run method to handle client communication
         public void run() {
             try{
                 ois = new ObjectInputStream(clientSocket.getInputStream());
@@ -212,9 +222,7 @@ public class ServerHost  {
     }
 
 
-
-
-
+    // Main method to start the server
     public static void main(String[] args) throws IOException {
         ServerHost server = new ServerHost();
 
